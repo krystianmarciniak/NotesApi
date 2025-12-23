@@ -41,7 +41,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// ważne przy testach z pliku index.html (file://) – wtedy jest CORS
 builder.Services.AddCors(opt =>
 {
     opt.AddDefaultPolicy(p => p
@@ -52,11 +51,10 @@ builder.Services.AddCors(opt =>
 
 var app = builder.Build();
 
-// (Opcjonalnie) żeby testy zawsze miały „czystą” bazę jak w Bibliotece API:
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureDeleted();   // <-- jeśli prowadzący lubi powtarzalność testów
+    db.Database.EnsureDeleted();
     db.Database.Migrate();
 }
 

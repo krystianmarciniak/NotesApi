@@ -4,25 +4,25 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using NotesApi.Contracts.Auth;
 using NotesApi.Data;
-using NotesApi.Dtos;
 
 namespace NotesApi.Controllers;
 
 [ApiController]
-public class AuthController : ControllerBase
+public class AccountController : ControllerBase
 {
   private readonly UserManager<ApplicationUser> _userManager;
   private readonly IConfiguration _cfg;
 
-  public AuthController(UserManager<ApplicationUser> userManager, IConfiguration cfg)
+  public AccountController(UserManager<ApplicationUser> userManager, IConfiguration cfg)
   {
     _userManager = userManager;
     _cfg = cfg;
   }
 
   [HttpPost("/register")]
-  public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+  public async Task<IActionResult> Register([FromBody] RegisterRequest dto)
   {
     var user = new ApplicationUser { UserName = dto.Email, Email = dto.Email };
     var result = await _userManager.CreateAsync(user, dto.Password);
@@ -34,7 +34,7 @@ public class AuthController : ControllerBase
   }
 
   [HttpPost("/login")]
-  public async Task<ActionResult<string>> Login([FromBody] LoginDto dto)
+  public async Task<ActionResult<string>> Login([FromBody] LoginRequest dto)
   {
     var user = await _userManager.FindByEmailAsync(dto.Email);
     if (user is null) return Unauthorized();
@@ -43,7 +43,7 @@ public class AuthController : ControllerBase
     if (!ok) return Unauthorized();
 
     var token = CreateJwt(user);
-    return Ok(token); // <- czysty string
+    return Ok(token); // czysty string JWT — OK pod testy
   }
 
   private string CreateJwt(ApplicationUser user)
@@ -53,21 +53,21 @@ public class AuthController : ControllerBase
     var audience = _cfg["Jwt:Audience"]!;
 
     var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Email, user.Email ?? ""),
-        };
+    {
+      new Claim(ClaimTypes.NameIdentifier, user.Id),
+      new Claim(ClaimTypes.Email, user.Email ?? ""),
+    };
 
     var creds = new SigningCredentials(
-        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-        SecurityAlgorithms.HmacSha256);
+      new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+      SecurityAlgorithms.HmacSha256);
 
     var jwt = new JwtSecurityToken(
-        issuer: issuer,
-        audience: audience,
-        claims: claims,
-        expires: DateTime.UtcNow.AddHours(2),
-        signingCredentials: creds);
+      issuer: issuer,
+      audience: audience,
+      claims: claims,
+      expires: DateTime.UtcNow.AddHours(2),
+      signingCredentials: creds);
 
     return new JwtSecurityTokenHandler().WriteToken(jwt);
   }

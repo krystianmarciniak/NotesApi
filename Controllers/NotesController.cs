@@ -2,8 +2,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NotesApi.Contracts.Notes;
 using NotesApi.Data;
-using NotesApi.Dtos;
 using NotesApi.Models;
 
 namespace NotesApi.Controllers;
@@ -19,66 +19,65 @@ public class NotesController : ControllerBase
   private string UserId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
   [HttpGet]
-  public async Task<ActionResult<IEnumerable<NoteDto>>> GetAll()
+  public async Task<ActionResult<IEnumerable<NoteResponse>>> List()
   {
     var notes = await _db.Notes
-        .Where(n => n.UserId == UserId)
-        .OrderBy(n => n.Id)
-        .Select(n => new NoteDto(n.Id, n.Content))
-        .ToListAsync();
+      .Where(n => n.UserId == UserId)
+      .OrderBy(n => n.Id)
+      .Select(n => new NoteResponse(n.Id, n.Content))
+      .ToListAsync();
 
     return Ok(notes);
   }
 
   [HttpGet("{id:int}")]
-  public async Task<ActionResult<NoteDto>> GetOne(int id)
+  public async Task<ActionResult<NoteResponse>> GetById(int id)
   {
-    var note = await _db.Notes
-        .Where(n => n.UserId == UserId && n.Id == id)
-        .Select(n => new NoteDto(n.Id, n.Content))
-        .FirstOrDefaultAsync();
+    var entity = await _db.Notes
+      .Where(n => n.UserId == UserId && n.Id == id)
+      .Select(n => new NoteResponse(n.Id, n.Content))
+      .FirstOrDefaultAsync();
 
-    if (note is null) return NotFound();
-    return Ok(note);
+    if (entity is null) return NotFound();
+    return Ok(entity);
   }
 
   [HttpPost]
-  public async Task<ActionResult<NoteDto>> Create([FromBody] NoteCreateDto dto)
+  public async Task<ActionResult<NoteResponse>> Create([FromBody] CreateNoteRequest dto)
   {
-    var note = new Note
+    var entity = new Note
     {
       Content = dto.Content ?? "",
       UserId = UserId
     };
 
-    _db.Notes.Add(note);
+    _db.Notes.Add(entity);
     await _db.SaveChangesAsync();
 
-    var outDto = new NoteDto(note.Id, note.Content);
-    return Ok(outDto); // często testy oczekują 200 + obiekt (nie 201)
+    return Ok(new NoteResponse(entity.Id, entity.Content));
   }
 
   [HttpPut("{id:int}")]
-  public async Task<ActionResult<NoteDto>> Update(int id, [FromBody] NoteUpdateDto dto)
+  public async Task<ActionResult<NoteResponse>> Update(int id, [FromBody] UpdateNoteRequest dto)
   {
-    var note = await _db.Notes.FirstOrDefaultAsync(n => n.UserId == UserId && n.Id == id);
-    if (note is null) return NotFound();
+    var entity = await _db.Notes.FirstOrDefaultAsync(n => n.UserId == UserId && n.Id == id);
+    if (entity is null) return NotFound();
 
-    note.Content = dto.Content ?? "";
+    entity.Content = dto.Content ?? "";
     await _db.SaveChangesAsync();
 
-    return Ok(new NoteDto(note.Id, note.Content));
+    return Ok(new NoteResponse(entity.Id, entity.Content));
   }
 
   [HttpDelete("{id:int}")]
   public async Task<IActionResult> Delete(int id)
   {
-    var note = await _db.Notes.FirstOrDefaultAsync(n => n.UserId == UserId && n.Id == id);
-    if (note is null) return NotFound();
+    var entity = await _db.Notes.FirstOrDefaultAsync(n => n.UserId == UserId && n.Id == id);
+    if (entity is null) return NotFound();
 
-    _db.Notes.Remove(note);
+    _db.Notes.Remove(entity);
     await _db.SaveChangesAsync();
 
-    return NoContent(); // typowo 204
+    return NoContent();
   }
 }

@@ -39,13 +39,13 @@ rejestrację użytkownika, logowanie, autoryzację JWT oraz operacje na notatkac
 
 ### 1 Rejestracja użytkownika  
 
-**Plik:**`(./screenshots/01_register_userA_200.png)`
+![register_userA](./screenshots/01_register_userA_200.png)
 
 Rejestracja nowego użytkownika w systemie przy użyciu endpointu `/register`. Operacja zakończona kodem odpowiedzi 200 OK.
 
 ### 2 Logowanie użytkownika – uzyskanie tokena JWT   
 
-**Plik:** \(./screenshots/02_login_userA_200_jwt.png)``.
+![login_userA](./screenshots/02_login_userA_200_jwt.png).
 
 No change found to suggest.
 
@@ -54,28 +54,28 @@ W odpowiedzi serwer zwraca poprawny token JWT.
 
 ### 3  Użycie tokena JWT w nagłówku Authorization.
 
-**Plik:**`(./screenshots/02_login_userA_Authorization_Bearer_Token_200_jwt.png)`
+![Bearer_Token](./screenshots/02_login_userA_Authorization_Bearer_Token_200_jwt.png).
 
 Przekazanie otrzymanego tokena JWT w nagłówku
 `Authorization: Bearer <token>` w narzędziu Postman.
 
 ### 4  Pobranie listy notatek – stan początkowy  
 
-**Plik:**`(./screenshots/03_get_notes_userA_empty_200_b.png)`
+![get_notes_userA](./screenshots/03_get_notes_userA_empty_200_b.png).
 
 Pobranie listy notatek zalogowanego użytkownika przy użyciu endpointu `/notes`.
 Lista jest pusta, co potwierdza brak danych początkowych.
 
 ### 5 Dodanie nowej notatki  
 
-**Plik:**`(./screenshots/04_post_notes_userA_200.png)`
+![post_notes](./screenshots/04_post_notes_userA_200.png).
 
 Dodanie nowej notatki przez zalogowanego użytkownika przy użyciu endpointu `/notes`.
 Operacja zakończona sukcesem (**200 OK**).
 
 ### 6 Pobranie listy notatek po dodaniu elementu  
 
-**Plik:**`(./screenshots/05_get_notes_userA_1item_200.png)`
+![userA_1item](./screenshots/05_get_notes_userA_1item_200.png).
 
 Ponowne pobranie listy notatek.
 Odpowiedź zawiera wcześniej dodaną notatkę, co potwierdza poprawne

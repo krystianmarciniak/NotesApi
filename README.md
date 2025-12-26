@@ -45,7 +45,9 @@ Rejestracja nowego użytkownika w systemie przy użyciu endpointu `/register`. O
 
 ### 2 Logowanie użytkownika – uzyskanie tokena JWT   
 
-**Plik:**`(./screenshots/02_login_userA_200_jwt.png)`
+**Plik:** \(./screenshots/02_login_userA_200_jwt.png)``.
+
+No change found to suggest.
 
 Logowanie użytkownika przy użyciu endpointu `/login`.
 W odpowiedzi serwer zwraca poprawny token JWT.

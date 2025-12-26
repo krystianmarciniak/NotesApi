@@ -1,0 +1,7 @@
+Zaimplementowano oraz przetestowano prosty interfejs REST API umożliwiający rejestrację użytkowników, logowanie oraz zarządzanie notatkami z wykorzystaniem mechanizmu autoryzacji JWT (Bearer Token). API działa w architekturze klient–serwer, a dostęp do zasobów chronionych wymaga poprawnego tokena uwierzytelniającego.
+
+W ramach testów wykonano pełny scenariusz użytkownika obejmujący: rejestrację nowego konta, logowanie i uzyskanie tokena JWT, pobranie listy notatek (początkowo pustej), dodanie nowej notatki oraz ponowne pobranie listy notatek zawierającej dodany element. Wszystkie operacje zakończyły się poprawnymi kodami odpowiedzi HTTP (200 OK).
+
+Autoryzacja realizowana jest poprzez nagłówek Authorization: Bearer <JWT>. Token posiada ograniczony czas ważności, a jego wygaśnięcie skutkuje odpowiedzią 401 Unauthorized, co jest zachowaniem zgodnym ze specyfikacją bezpieczeństwa API. Zapytania typu GET nie wymagają przesyłania danych w treści żądania, natomiast operacje POST przyjmują dane w formacie JSON.
+
+Poprawność działania systemu została potwierdzona przy użyciu narzędzia Postman, a poszczególne etapy testów zostały udokumentowane w postaci zrzutów ekranu przedstawiających odpowiedzi serwera oraz statusy HTTP.
